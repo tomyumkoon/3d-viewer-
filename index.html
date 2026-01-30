@@ -5,30 +5,110 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>3D Viewer</title>
 
-  <!-- 3D表示用ライブラリ（Google model-viewer） -->
+  <!-- Google model-viewer -->
   <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
 
   <style>
-    body { margin: 0; }
-    model-viewer{
+    :root {
+      --bg: #111;
+      --splash-duration-ms: 3000; /* 冒頭表示時間 */
+      --fade-ms: 700;            /* フェードアウト時間 */
+      --corner-size: 44px;       /* 左上ロゴのサイズ */
+      --corner-padding: 12px;    /* 左上ロゴの余白 */
+    }
+
+    html, body {
+      margin: 0;
+      height: 100%;
+      background: var(--bg);
+      overflow: hidden;
+    }
+
+    /* 3Dビュー全画面 */
+    #viewer {
       width: 100vw;
       height: 100vh;
-      background: #111;
+      background: var(--bg);
+      display: none; /* スプラッシュ後に表示 */
+    }
+
+    /* スプラッシュ（冒頭） */
+    #splash {
+      position: fixed;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      background: var(--bg);
+      opacity: 1;
+      transition: opacity var(--fade-ms) ease;
+      z-index: 10;
+    }
+    #splash.fade-out {
+      opacity: 0;
+    }
+    #splash img {
+      width: min(52vw, 240px);
+      height: auto;
+      display: block;
+    }
+
+    /* 左上常駐ロゴ */
+    #cornerLogo {
+      position: fixed;
+      top: var(--corner-padding);
+      left: var(--corner-padding);
+      width: var(--corner-size);
+      height: auto;
+      z-index: 20;
+      display: none;            /* スプラッシュ後に表示 */
+      pointer-events: none;     /* 回転操作の邪魔をしない */
+      opacity: 0.95;
     }
   </style>
 </head>
-<body>
 
+<body>
+  <!-- 左上ロゴ（常駐） -->
+  <img id="cornerLogo" src="./logo.svg" alt="logo" />
+
+  <!-- 冒頭スプラッシュ -->
+  <div id="splash" aria-label="Loading">
+    <img src="./logo.svg" alt="logo" />
+  </div>
+
+  <!-- 3Dビュー（スプラッシュ後に表示） -->
   <model-viewer
-    src="./your_model.glb"
+    id="viewer"
+    src="./staek.glb"
     camera-controls
     touch-action="pan-y"
     auto-rotate
     rotation-per-second="20deg"
     shadow-intensity="1"
     exposure="1"
+    loading="eager"
+    reveal="auto"
   >
   </model-viewer>
 
+  <script>
+    const splash = document.getElementById("splash");
+    const viewer = document.getElementById("viewer");
+    const cornerLogo = document.getElementById("cornerLogo");
+
+    const splashDurationMs = 3000; // 冒頭3秒
+    const fadeMs = 700;            // CSSの --fade-ms と合わせる
+
+    // 3秒後にフェードアウト → フェード完了後に3Dビュー表示 & 左上ロゴ表示
+    setTimeout(() => {
+      splash.classList.add("fade-out");
+
+      setTimeout(() => {
+        splash.style.display = "none";
+        viewer.style.display = "block";
+        cornerLogo.style.display = "block";
+      }, fadeMs);
+    }, splashDurationMs);
+  </script>
 </body>
 </html>

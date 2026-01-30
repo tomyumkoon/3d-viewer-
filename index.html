@@ -43,9 +43,7 @@
       transition: opacity var(--fade-ms) ease;
       z-index: 10;
     }
-    #splash.fade-out {
-      opacity: 0;
-    }
+    #splash.fade-out { opacity: 0; }
     #splash img {
       width: min(52vw, 240px);
       height: auto;
@@ -69,11 +67,11 @@
 
 <body>
   <!-- 左上ロゴ（常駐） -->
-  <img id="cornerLogo" src="./logo.svg" alt="logo" />
+  <img id="cornerLogo" src="./logo.png" alt="logo" />
 
   <!-- 冒頭スプラッシュ -->
   <div id="splash" aria-label="Loading">
-    <img src="./logo.svg" alt="logo" />
+    <img src="./logo.png" alt="logo" />
   </div>
 
   <!-- 3Dビュー（スプラッシュ後に表示） -->
@@ -96,10 +94,9 @@
     const viewer = document.getElementById("viewer");
     const cornerLogo = document.getElementById("cornerLogo");
 
-    const splashDurationMs = 3000; // 冒頭3秒
-    const fadeMs = 700;            // CSSの --fade-ms と合わせる
+    const splashDurationMs = 3000;
+    const fadeMs = 700;
 
-    // 3秒後にフェードアウト → フェード完了後に3Dビュー表示 & 左上ロゴ表示
     setTimeout(() => {
       splash.classList.add("fade-out");
 
